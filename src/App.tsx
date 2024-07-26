@@ -6,6 +6,7 @@ import { BACKDROP_BASE_URL } from "./config";
 import { TVShowDetail } from "./components/TVShowDetail/TVShowdetail";
 import { Logo } from "./components/Logo/Logo";
 import { TVShowList } from "./components/TVShowList/TVShowList";
+import { SearchBar } from "./components/SearchBar/SearchBar";
 
 function App() {
   const [curTVShow, setCurTVShow] = useState<any>();
@@ -21,7 +22,13 @@ function App() {
   async function fetchRecommendations(tvShowId: string) {
     const list = await TVShowAPI.fetchRecommendations(tvShowId);
     setRecommendationList(list.slice(0, 10));
-    console.log(list);
+  }
+
+  async function fetchByTitle(title: string) {
+    const resp = await TVShowAPI.fetchByTitle(title);
+    if (resp.length > 0) {
+      setCurTVShow(resp[0]);
+    }
   }
 
   useEffect(() => {
@@ -52,7 +59,7 @@ function App() {
             <Logo />{" "}
           </div>
           <div className="col-md-12 col-lg-4">
-            <input style={{ width: "100%" }} type="text" />
+            <SearchBar onSubmit={fetchByTitle} />
           </div>
         </div>
       </div>
