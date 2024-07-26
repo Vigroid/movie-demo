@@ -13,9 +13,13 @@ function App() {
   const [recommendationList, setRecommendationList] = useState<any[]>([]);
 
   async function fetchPopular() {
-    const list = await TVShowAPI.fetchPopulars();
-    if (list.length > 0) {
-      setCurTVShow(list[0]);
+    try {
+      const list = await TVShowAPI.fetchPopulars();
+      if (list.length > 0) {
+        setCurTVShow(list[0]);
+      }
+    } catch (error) {
+      alert("Something wrong when fetching populars");
     }
   }
 
