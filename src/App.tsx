@@ -4,17 +4,37 @@ import s from "./style.module.css";
 import { TVShowAPI } from "./api/tv-shows";
 import { BACKDROP_BASE_URL } from "./config";
 import { TVShowDetail } from "./components/TVShowDetail/TVShowdetail";
+import { Logo } from "./components/Logo/Logo";
+import { TVShowList } from "./components/TVShowList/TVShowList";
 
 function App() {
   const [curTVShow, setCurTVShow] = useState<any>();
+  const [recommendationList, setRecommendationList] = useState<any[]>([]);
+
+  async function fetchPopular() {
+    const list = await TVShowAPI.fetchPopulars();
+    if (list.length > 0) {
+      setCurTVShow(list[0]);
+    }
+  }
+
+  async function fetchRecommendations(tvShowId: string) {
+    const list = await TVShowAPI.fetchRecommendations(tvShowId);
+    setRecommendationList(list.slice(0, 10));
+    console.log(list);
+  }
+
   useEffect(() => {
-    (async () => {
-      const list = await TVShowAPI.fetchPopulars();
-      if (list.length > 0) {
-        setCurTVShow(list[0]);
-      }
-    })();
+    fetchPopular();
   }, []);
+
+  useEffect(() => {
+    if (curTVShow) fetchRecommendations(curTVShow.id);
+  }, [curTVShow]);
+
+  function updateCurrentTVShow(tvShow: any) {
+    setCurTVShow(tvShow);
+  }
 
   return (
     <div
@@ -29,8 +49,7 @@ function App() {
         {/* search bar */}
         <div className="row">
           <div className="col-4">
-            <div>Logo</div>
-            <div>Subtitle</div>
+            <Logo />{" "}
           </div>
           <div className="col-md-12 col-lg-4">
             <input style={{ width: "100%" }} type="text" />
@@ -40,7 +59,14 @@ function App() {
       <div className={s.tv_show_detail}>
         {curTVShow && <TVShowDetail tvShow={curTVShow} />}
       </div>
-      <div className={s.recommended_tv_shows}>Recommended</div>
+      <div className={s.recommended_tv_shows}>
+        {recommendationList && (
+          <TVShowList
+            list={recommendationList}
+            onClickItem={updateCurrentTVShow}
+          />
+        )}
+      </div>
     </div>
   );
 }
