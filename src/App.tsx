@@ -60,7 +60,7 @@ function App() {
         {/* search bar */}
         <div className="row">
           <div className="col-4">
-            <Logo />{" "}
+            <Logo />
           </div>
           <div className="col-md-12 col-lg-4">
             <SearchBar onSubmit={fetchByTitle} />
